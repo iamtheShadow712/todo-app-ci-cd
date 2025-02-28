@@ -12,7 +12,7 @@ pipeline{
             }
         }
 
-        stage('Dependency Check')[
+        stage('Dependency Check'){
             parallel{
                 stage("NPM Dependency Audit"){
                     steps{
@@ -32,6 +32,6 @@ pipeline{
                     }
                 }
             }
-        ]
+        }
     }
 }
