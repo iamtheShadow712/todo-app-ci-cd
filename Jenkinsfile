@@ -12,21 +12,23 @@ pipeline{
             }
         }
 
-        stage("NPM Dependency Audit"){
-            steps{
-                sh "npm audit --audit-level=critical"
+        parallel{
+            stage("NPM Dependency Audit"){
+                steps{
+                    sh "npm audit --audit-level=critical"
+                }
             }
-        }
 
-        stage('OWASP Dependency Check'){
-            steps{
-                dependencyCheck additionalArguments: ''' 
-                    --out \'./\'
-                    --scan \'./\'
-                    -format \'ALL\' 
-                    --prettyPrint''', odcInstallation: 'OWASP-depcheck-12.1'
-        
-        // dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            stage('OWASP Dependency Check'){
+                steps{
+                    dependencyCheck additionalArguments: ''' 
+                        --out \'./\'
+                        --scan \'./\'
+                        -format \'ALL\' 
+                        --prettyPrint''', odcInstallation: 'OWASP-depcheck-12.1'
+            
+            // dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                }
             }
         }
     }
