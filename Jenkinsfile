@@ -44,22 +44,26 @@ pipeline{
             }
         }
 
-        stage("Unit Testing"){
-            options{ retry(2) }
-            steps{
-                withCredentials([string(credentialsId: 'TEST_MONGO_URI', variable: 'TEST_MONGO_URI')]) {
-                    sh "npm run test"
+        stage("Unit Test and Coverage"){
+            parallel{
+                stage("Unit Testing"){
+                    options{ retry(2) }
+                    steps{
+                        withCredentials([string(credentialsId: 'TEST_MONGO_URI', variable: 'TEST_MONGO_URI')]) {
+                            sh "npm run test"
+                        }
+
+                        junit allowEmptyResults: true, stdioRetention: 'ALL', testResults: 'test-results.xml'
+                    }
                 }
 
-                junit allowEmptyResults: true, stdioRetention: 'ALL', testResults: 'test-results.xml'
-            }
-        }
-
-        stage("Code Coverage"){
-            steps{
-                catchError(buildResult: 'SUCCESS', message: 'Need to include more Unit Test cases in the future releases.', stageResult: 'UNSTABLE') {
-                    withCredentials([string(credentialsId: 'TEST_MONGO_URI', variable: 'TEST_MONGO_URI')]) {
-                        sh "npm run coverage"
+                stage("Code Coverage"){
+                    steps{
+                        catchError(buildResult: 'SUCCESS', message: 'Need to include more Unit Test cases in the future releases.', stageResult: 'UNSTABLE') {
+                            withCredentials([string(credentialsId: 'TEST_MONGO_URI', variable: 'TEST_MONGO_URI')]) {
+                                sh "npm run coverage"
+                            }
+                        }
                     }
                 }
             }
