@@ -5,6 +5,10 @@ pipeline{
         nodejs "node-23.10.0"
     }
 
+    environment{
+        TEST_MONGO_URI = credentials('TEST_MONGO_URI')
+    }
+
     options {
         disableResume()
         disableConcurrentBuilds abortPrevious: true
@@ -49,6 +53,7 @@ pipeline{
                 stage("Unit Testing"){
                     options{ retry(2) }
                     steps{
+                        sh 'echo mongo_url - $TEST_MONGO_URI'
                         withCredentials([string(credentialsId: 'TEST_MONGO_URI', variable: 'TEST_MONGO_URI')]) {
                             sh "npm run test"
                         }
