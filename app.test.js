@@ -2,26 +2,20 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const mongoose = require('mongoose');
 const { app, Todo } = require('./app.js');
+const connectDB = require('./db.js');
+require('dotenv').config({ path: ".env.test" })
+
 
 const { expect } = chai;
 chai.use(chaiHttp);
 
 describe('Todo API Tests', () => {
     before(async function () {
-        this.timeout(10000); // Increase timeout for MongoDB connection
+        this.timeout(10000);
 
-        if (mongoose.connection.readyState === 0) { // Prevent multiple connections
-            try {
-                console.log("Connecting to MongoDB for tests...");
-                await mongoose.connect(process.env.TEST_MONGO_URI || process.env.MONGO_URI, {
-                    user: process.env.MONGO_USERNAME,
-                    pass: process.env.MONGO_PASSWORD
-                });
-                console.log("Connected to MongoDB!");
-            } catch (error) {
-                console.error("MongoDB Connection Error:", error);
-                throw error;
-            }
+        if (mongoose.connection.readyState === 0) {
+            console.log("Connecting to MongoDB for tests...");
+            await connectDB(process.env.TEST_MONGO_URI)
         } else {
             console.log("Already connected to MongoDB, skipping new connection.");
         }

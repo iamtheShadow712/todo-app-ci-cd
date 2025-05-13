@@ -3,20 +3,11 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
-require('dotenv').config();
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cors());
-
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-    user: process.env.MONGO_USERNAME,
-    pass: process.env.MONGO_PASSWORD
-}).catch((err) => {
-    console.error("error: ", err)
-});
 
 
 // Define Todo Schema
@@ -29,7 +20,7 @@ const todoSchema = new mongoose.Schema({
 const Todo = mongoose.model('Todo', todoSchema);
 
 
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/', 'index.html'))
 })
 
@@ -91,8 +82,5 @@ app.get('/ready', (req, res) => {
     res.status(200).json({ status: 'ready' });
 });
 
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
-});
 
 module.exports = { app, Todo };
