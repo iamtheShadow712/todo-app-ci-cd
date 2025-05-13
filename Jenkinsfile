@@ -30,6 +30,10 @@ pipeline{
                         ''', odcInstallation: 'OWASP-12.1.0'
         
        				    dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+
+                        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-report.html', reportName: 'Dependency Check HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+
+                        junit allowEmptyResults: true, keepProperties: true, stdioRetention: 'ALL', testResults: 'dependency-check-junit.xml'
                     }
                 }
             }
