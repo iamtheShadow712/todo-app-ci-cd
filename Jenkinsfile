@@ -5,6 +5,11 @@ pipeline{
         nodejs "node-23.10.0"
     }
 
+    options {
+        disableResume()
+        disableConcurrentBuilds abortPrevious: true
+    }
+
     stages{
         stage("Installing Dependencies"){
             options{ timestamps() }
@@ -47,6 +52,15 @@ pipeline{
                 }
 
                 junit allowEmptyResults: true, stdioRetention: 'ALL', testResults: 'test-results.xml'
+            }
+        }
+
+        stage("Code Coverage"){
+            options{ retry(2) }
+            steps{
+                withCredentials([string(credentialsId: 'TEST_MONGO_URI', variable: 'TEST_MONGO_URI')]) {
+                    sh "npm run coverage"
+                }
             }
         }
     }
