@@ -5,10 +5,24 @@ pipeline{
         nodejs "node-23.10.0"
     }
 
+    // environment{
+    //     PORT =
+    // }
+
     stages{
-        stage("Checking Pipeline"){
+        stage("Installing Dependencies"){
             steps{
-                sh "echo 'Hello world'"
+                sh "npm install --no-audit"
+            }
+        }
+
+        stage("Dependency Check"){
+            parallel{
+                stage("NPM Dependency Audit"){
+                    steps{
+                        sh "npm audit --audit-level=critical"
+                    }
+                }
             }
         }
     }
