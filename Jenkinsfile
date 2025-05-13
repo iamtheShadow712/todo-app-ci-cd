@@ -7,6 +7,7 @@ pipeline{
 
     stages{
         stage("Installing Dependencies"){
+            options{ timestamps() }
             steps{
                 sh "npm install --no-audit"
             }
@@ -39,6 +40,7 @@ pipeline{
         }
 
         stage("Unit Testing"){
+            options{ retry(2) }
             steps{
                 withCredentials([string(credentialsId: 'TEST_MONGO_URI', variable: 'TEST_MONGO_URI')]) {
                     sh "npm run test"
