@@ -56,7 +56,6 @@ pipeline{
         }
 
         stage("Code Coverage"){
-            options{ retry(2) }
             steps{
                 withCredentials([string(credentialsId: 'TEST_MONGO_URI', variable: 'TEST_MONGO_URI')]) {
                     sh "npm run coverage"
