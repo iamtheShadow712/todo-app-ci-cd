@@ -3,7 +3,6 @@ pipeline{
 
     tools{
         nodejs "node-23.10.0"
-        
     }
 
     stages{
@@ -36,6 +35,16 @@ pipeline{
                         junit allowEmptyResults: true, keepProperties: true, stdioRetention: 'ALL', testResults: 'dependency-check-junit.xml'
                     }
                 }
+            }
+        }
+
+        stage("Unit Testing"){
+            steps{
+                withCredentials([string(credentialsId: 'TEST_MONGO_URI', variable: 'TEST_MONGO_URI')]) {
+                    sh "npm run test"
+                }
+
+                junit allowEmptyResults: true, stdioRetention: 'ALL', testResults: 'test-results.xml'
             }
         }
     }
